@@ -1,4 +1,4 @@
-                                                    /* Blinker Demo II */
+/* Blinker Demo II */
 
 #include <avr/io.h>
 #include <util/delay.h>
@@ -13,7 +13,8 @@
 
 #define INPUT PINB
 
-#define DELAYTIME 5000
+// 16MHz external clock source
+#define DELAYTIME 16000
 
 // Anzahl der LEDS
 #define MAX_LEDS 4
@@ -28,53 +29,51 @@ int main(void) {
 
 
 
-  // Set LED pin for output
-  setBit(LED_DDR, LED_1);
-  setBit(LED_DDR, LED_2);
-  setBit(LED_DDR, LED_3);
-  setBit(LED_DDR, LED_4);
+// Set LED pin for output
+setBit(LED_DDR, LED_1);
+setBit(LED_DDR, LED_2);
+setBit(LED_DDR, LED_3);
+setBit(LED_DDR, LED_4);
 
-  for(int j = 0; j < 6; j++) {
-    for(int i = 0; i < MAX_LEDS; i++) {
-      _SFR_BYTE(LED_PORT) ^= (1 << i);
-      _delay_ms(1000);
-    }
-  }
+for(int j = 0; j < 6; j++) {
+	for(int i = 0; i < MAX_LEDS; i++) {
+	_SFR_BYTE(LED_PORT) ^= (1 << i);
+	_delay_ms(1000);
+	}
+}
 
-  // Mainloop
-  while (1) {
-    _SFR_BYTE(LED_PORT) &= ~(1 << 0);
-    _SFR_BYTE(LED_PORT) &= ~(1 << 1);
-    _SFR_BYTE(LED_PORT) &= ~(1 << 2);
-    _SFR_BYTE(LED_PORT) &= ~(1 << 3);
-    if (INPUT & (1<<PINC0)) {
-      for (int a = 0; a <= MAX_DEC; a++) {
-          int b[MAX_LEDS];
+// Mainloop
+while (1) {
+	_SFR_BYTE(LED_PORT) &= ~(1 << 0);
+	_SFR_BYTE(LED_PORT) &= ~(1 << 1);
+	_SFR_BYTE(LED_PORT) &= ~(1 << 2);
+	_SFR_BYTE(LED_PORT) &= ~(1 << 3);
+	if (INPUT & (1<<PINC0)) {
+		for (int a = 0; a <= MAX_DEC; a++) {
+			int b[MAX_LEDS];
 
-          for (int i = 0, c = a; i <= MAX_LEDS; i++)
-          {
-              b[i] = c % 2;
-              c >>= 1;
-          }
+			for (int i = 0, c = a; i <= MAX_LEDS; i++) {
+				b[i] = c % 2;
+				c >>= 1;
+			}
 
-          for(int i = MAX_LEDS; i >= 0; --i) {
-              if(b[i]<0)
-              {
-                  b[i] = b[i] * -1;
-              }
-          }
-          for(int i = 0; i < MAX_LEDS; i++) {
-            if (b[i] == 0) {
-              // clearBit
-              _SFR_BYTE(LED_PORT) &= ~(1 << i);
-            } else {
-              // setBit
-              _SFR_BYTE(LED_PORT) |= (1 << i);
-            }
-          }
-          _delay_ms(DELAYTIME);
-      }
-    }
-  }
-  return (0);
+			for(int i = MAX_LEDS; i >= 0; --i) {
+				if(b[i]<0) {
+					b[i] = b[i] * -1;
+				}
+			}
+			for(int i = 0; i < MAX_LEDS; i++) {
+				if (b[i] == 0) {
+					// clearBit
+					_SFR_BYTE(LED_PORT) &= ~(1 << i);
+				} else {
+				// setBit
+					_SFR_BYTE(LED_PORT) |= (1 << i);
+				}
+			}
+			_delay_ms(DELAYTIME);
+			}
+		}
+	}
+	return (0);
 }
